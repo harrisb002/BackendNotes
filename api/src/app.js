@@ -6,7 +6,7 @@ const app = express();
 const port = 3000;
 
 // Accept info passed in the body
-app.use(express.json)
+app.use(express.json())
 
 
 // Defining middleware
@@ -62,6 +62,22 @@ app.get("/favorites", (req, res) => {
     res.json({ favorites });
 });
 
+app.post('/favorites', (req, res) => {
+    const { name, url } = req.body
+
+    if (!name) {
+        return res.status(400).json({ error: 'Name required' })
+    }
+    if (!url) {
+        return res.status(400).json({ error: 'Url required' })
+    }
+
+    const result = db
+        .prepare('INSERT INTO favorites (name, url) VALUES (?, ?)')
+        .run(name, url);
+    res.status(201).json({ id: result.lastInsertRowid })
+});
+
 app.get("/favorites/:id", (req, res) => {
     // If you want to go to the next section of the error handling pipeline
     //   you must manually invoke next() in the catch
@@ -84,16 +100,7 @@ app.get("/favorites/:id", (req, res) => {
 
 });
 
-app.post('/favorites', (req, res) => {
-    const { name, url } = req.body
 
-    if (!name) {
-        return res.status(400).json({ error: 'Name required' })
-    }
-
-    const result = db.prepare('INSERT INTO favorites (name, url) VALUES (?, ?)').run(name, url)
-    res.status(201).json({ id: result.lastInsertRowid })
-})
 
 // Implementing error handling as middleware
 // Pipeline is defined as things are defined in the file,
