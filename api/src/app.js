@@ -1,29 +1,31 @@
 import express from "express";
+import Database from "better-sqlite3";
+
+const db = new Database('favorites.db')
 
 const app = express();
 const port = 3000;
 
-const favorites = [
-    { id: 0, name: "goog", url: "https://google.com" },
-    { id: 1, name: "social", url: "https://instagram.com" },
-    { id: 2, name: "news", url: "https://yahoo.com" },
-];
-
 app.get("/favorites", (req, res) => {
-    const favoritesCopy = [...favorites]
+    let query = 'SELECT * FROM favorites'
     const sort = req.query.sort;
 
     if (sort === 'asc') {
-        favoritesCopy.sort((a, b) => a.name.localeCompare(b.name))
+        query += ' ORDER BY name ASC'
     } else if (sort === 'desc') {
-        favoritesCopy.sort((a, b) => b.name.localeCompare(a.name))
+        query += ' ORDER BY name DESC'
     }
-    res.json({ favorites: favoritesCopy });
+
+    const favorites = db.prepare(query).all()
+
+    res.json({ favorites });
 });
 
 app.get("/favorites/:id", (req, res) => {
     const id = parseInt(req.params.id);
-    const favorite = favorites.find((fav) => fav.id === id)
+    // const favorite = favorites.find((fav) => fav.id === id)
+    // Use SELECT instead
+    const favorite = db.prepare('SELECT * FROM favorites WHERE id = ?').get(id)
     if (!favorite) {
         return res.status(404).json({ error: "Favorite not found" })
     }
