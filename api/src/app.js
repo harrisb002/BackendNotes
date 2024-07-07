@@ -100,6 +100,40 @@ app.get("/favorites/:id", (req, res) => {
 
 });
 
+app.delete('/favorites/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const result = db.prepare('DELETE FROM favorites WHERE id = ?').run(id)
+
+    if (!result.changes) {
+        return res.status(404).json({ error: 'Favorite not found.' })
+    }
+
+    res.sendStatus(200)
+})
+
+app.put('/favorites/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+    const { name, url } = req.body
+
+    if (!name) {
+        return res.status(400).json({ error: 'Name required' })
+    }
+
+    if (!url) {
+        return res.status(400).json({ error: 'Url required' })
+    }
+
+    const result = db
+        .prepare('UPDATE favorites SET name=?, url=? WHERE id=?')
+        .run(name, url, id)
+
+    if (!result.changes) {
+        return res.status(404).json({ error: 'Favorite not found.' })
+    }
+
+    res.sendStatus(200)
+})
+
 
 
 // Implementing error handling as middleware
