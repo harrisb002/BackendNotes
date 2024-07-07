@@ -4,6 +4,7 @@
   "description": "",
   "main": "api/src/app.js",
   "scripts": {
+    "dev": "NODE_ENV=produvtion node api/src/app.js",
     "start": "nodemon api/src/app.js"
   },
   "type": "module",
