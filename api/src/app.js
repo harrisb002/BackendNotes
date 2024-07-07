@@ -134,6 +134,40 @@ app.put('/favorites/:id', (req, res) => {
     res.sendStatus(200)
 })
 
+app.patch('/favorites/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+    const { name, url } = req.body
+
+    if (!name && !url) {
+        return res.status(400).json({ error: 'Name or Url required.' })
+    }
+
+    // const favorite = db
+    //     .prepare('SELECT * FROM favorites WHERE id = ?')
+    //     .get(id)
+
+    // if (!favorite) {
+    //     return res.status(404).json({ error: "Favorite not found" })
+    // }
+
+    // const newName = name || favorite.name
+    // const newUrl = url || favorite.url
+
+    // COALESCE() returns the first value in the arguements that are not null
+    // This is preferred in contrast to the above due to race conditions as well
+    //  as needing to go to the Database once instead of twice as before
+    const result = db
+        .prepare('UPDATE favorites SET name=COALESCE(?, name), url=COALESCE(?, url) WHERE id=?')
+        .run(name, url, id)
+
+    // Check if changes where made
+    if (!result.changes) {
+        return res.status(404).json({ error: 'Favorite not found.' })
+    }
+
+    res.sendStatus(200)
+})
+
 
 
 // Implementing error handling as middleware
