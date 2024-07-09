@@ -1,1 +1,63 @@
 // Creating tests for api
+@url=http://localhost:3000
+
+### Retrieve All Favorites
+GET {{url}}/favorites
+
+### Retrieve Favorites Desc
+GET {{url}}/favorites?sort=desc
+
+### Retrieve Favorites Asc
+GET {{url}}/favorites?sort=asc
+
+
+
+
+// Refering to previous request responses using defined @name createFav
+
+### Create Favorite
+# @name createFav
+POST {{url}}/favorites
+Content-Type: application/json
+// Space needed here! 
+
+{
+    "name": "newTestName",
+    "url": "http://example.com"
+}
+
+// Set id  to the id of the name
+### Retrieve Favorite from id made in POST
+@createdID = {{createFav.response.body.$.id}}
+GET {{url}}/favorites/{{createdID}}
+
+
+
+### Replace Favorite
+# @name replaceFav
+PUT {{url}}/favorites/{{createdID}}
+Content-Type: application/json
+
+{
+    "name": "Replaced name",
+    "url": "http://newUrl.com"
+}
+
+### Retrieve Favorite from id made in PUT
+GET {{url}}/favorites/{{createdID}}
+
+
+
+
+### Update Favorite
+# @name updateFav
+PATCH {{url}}/favorites/{{createdID}}
+Content-Type: application/json
+
+{
+    "name": "Patched name",
+    "url": "http://newUrl.com"
+}
+
+### Retrieve Favorite from id made in PATCH
+GET {{url}}/favorites/{{createdID}}
