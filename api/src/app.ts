@@ -1,8 +1,7 @@
-// @ts-nocheck
-
 import express from "express";
+import { Request, Response, NextFunction } from "express";
 import Database from "better-sqlite3";
-import favorites from "./routes/favorites.ts";
+import favorites from "./routes/favorites.js";
 
 const db = new Database("favorites.db");
 const app = express();
@@ -31,7 +30,7 @@ app.get("/", (req, res) => {
   res.json({ hello: "world" });
 });
 
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.log(err);
   if (err.name === "sqliteError") {
     console.log("Db error hit.");
