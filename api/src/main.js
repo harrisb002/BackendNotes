@@ -3,9 +3,6 @@ import Database from 'better-sqlite3';
 import open, { apps } from 'open';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import {
-    
-} from ' '
 
 // Config the enviorment vars
 dotenv.config();

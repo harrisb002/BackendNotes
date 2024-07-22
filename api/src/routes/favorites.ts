@@ -1,6 +1,6 @@
 import express from "express";
 import Database from "better-sqlite3";
-const db = new Database("api/src/favorites.db");
+const db = new Database("favorites.db");
 
 const router = express.Router();
 
